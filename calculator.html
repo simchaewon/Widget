@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> 계산기 </title>
+  <style>
+    body,button{  margin:0px;  padding:0px;  }
+    button{   width:100px;  height:100px;  font-size:26px;  font-weight:bold;  }
+    #reset,#del{   width:220px;  }
+    section{  width:460px;  margin:20px auto;    }
+    section>#output{
+      width:460px;  height:80px;  border:1px solid #ccc;  box-sizing:border-box;
+      font-size:28px;  line-height:78px;  overflow:auto;  margin-bottom:20px;
+    }
+    #btns{    width:460px;  display:flex;  flex-flow:row wrap;  gap:20px;    }
+    body{
+            height: 100vh; margin: 0; padding: 0; background: #f2f3f7;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .text-mask{
+            font-size: 76px; font-weight: bold;
+            background: linear-gradient(45deg, #ff00ff, #00ffff, #ff00ff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent; 
+            animation: gradientFlow 5s ease infinite;
+        } 
+        @keyframes gradientFlow {
+            0%{ background-position: 0% 50%; }
+            50%{ background-position: 100% 50%; }
+            100%{ background-position: 0% 50%; }
+        }
+  </style>
+</head>
+<body>
+  <section>
+    <div id="output"></div>
+    <div id="btns">
+      <button>1</button><button>2</button><button>3</button>
+      <button>4</button><button>5</button><button>6</button>
+      <button>7</button><button>8</button><button>9</button>
+      <button>0</button><button>.</button><button>+</button>
+      <button>-</button><button>&times;</button><button>&divide;</button>
+      <button>=</button><button id="reset">C</button><button id="del">Del</button>
+    </div>
+  </section>
+  <script>
+    const calculate=( val )=>{
+      const output = document.querySelector('#output');
+      let result = output.innerHTML;
+      if( val=="=" ){
+      //result에서 ÷특수문자를 "/"로 교체, ×특수문자를 "*"로  교체(문자열.replace(current, new))
+      //정규표현식 / /로 감싸인 문자로 표시, /.../g -- 전체 문자열에서 일치 찾음  "÷" "/"
+        result = result.replace(/÷/g, "/").replace(/×/g, "*");
+        output.innerHTML += (" = "+eval(result) ); // output.innerHTML = eval(result)
+      }else{
+        result+=val;
+        output.innerHTML = result;
+      }      
+    }
+    const outputDel=()=>{
+      const output=document.querySelector('#output');
+      let result = output.innerHTML;
+      let textNum = result.length; 
+      output.innerHTML = result.substr(0, textNum-1);//전체글자수보다 1개 작은 글자수만큼 추출,출력
+    }
+    const btns = document.querySelectorAll('button');
+    for( let i in btns ){   
+      btns[i].onclick=function(){
+        if( this.innerHTML=="C" ){
+          window.location.reload();  // output.innerHTML="";
+        }else if( this.innerHTML == "Del"){
+          outputDel();  /* 한글자씩 지우기 함수  */
+        }else{
+          calculate(this.innerHTML);
+        }        
+      };
+    }
+  </script>
+</body>
+<div class="text-mask"></div>
+</html>

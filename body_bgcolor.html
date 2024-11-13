@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Widget </title>
+  <style>
+    html,body{  width:100%;  height:100%; }
+    body{  margin:0; padding: 0; }
+    .bg3 {
+    color:#fff;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(45deg, #ff00ff, #00ffff, #ff00ff);
+    background-size: 400% 400%;
+    animation: colorChange 5s ease infinite;
+    padding: 10px;
+    }
+    .bg3>a{
+      text-decoration: none; list-style: none; color: #000;
+      border-radius: 5px; border: 1px solid #000; background: #fff; padding: 5px;
+    }
+
+    @keyframes colorChange{
+       0%{ background-position: 0% 50%; }
+       50%{ background-position: 100% 50%; }
+       100%{ background-position: 0% 50%; }
+    }
+    h1{
+      position: absolute; left: 50%; top: 40%; transform: translate(-50%,-50%);
+      font-size: 100px; color: #fff; text-shadow: 5px 5px gray;
+    }
+    p{
+      position: absolute; left: 50%; top: 52%; transform: translate(-50%,-50%);
+      font-size: 40px; color: #fff;  
+    }
+    #workArea{
+      position:fixed;  width:1200px;  height:800px;  left:50%;  top:50%; 
+      transform:translate(-50%,-50%);  display:none;  background-color:#fc3;
+    }
+    iframe{
+      width:1200px;  height:800px;  border:0px;  margin:0;  overflow:hidden;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg3">
+  <a href="canvas_drawing.html" target="project" class="drawing">DrawingBoard</a>
+  <a href="notepa.html" target="project" class="notepa">Notepa</a>
+  <a href="calculator.html" target="project" class="calculator">Calculator</a>
+  <a href="musicplayer.html" target="project" class="musicplayer">MusicPlayer</a>
+</div>
+  <h1>UTILITY</h1>
+  <p>chaewon</p>
+  <section id="workArea">
+    <iframe width="1600" height="100%" marginwidth="0" marginheight="0" frameborder="0" scrolling="no" src="blank.html" name="project"></iframe>
+  </section>
+  <!-- Number(button.innerHTML.substr(3,1))-1/Number(button.innerHTML.charAt(3))-1 :: 0,1,2,3 -->
+  <script>
+    const bgcolors = new Array("#ffcc00","#00eecc","#cc66cc","#99cc99");
+    const bodyTag = document.querySelector('body'); // getElementsByTagName('body')[0]
+    const btns = document.querySelectorAll('button');
+
+    const links = document.querySelectorAll('.bg3>a');
+    links.forEach((a)=>{
+      a.addEventListener('click', ()=>{
+        document.getElementById('workArea').style.display='block';
+      })
+    })
+
+
+    for(let i in btns){
+      btns[i].onclick=function(){
+        
+
+        //bodyTag.style.backgroundColor=bgcolors[i];
+      }
+    }
+    /* bgcolors[this.value]( 0,1,2,3 ) , bgcolors[this.getAttribute('data-index')] */
+    
+  </script>
+</body>
+</html>

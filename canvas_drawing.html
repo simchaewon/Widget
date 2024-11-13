@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Drawing Canvas </title>
+  <style>
+    html,body{  width:100%;  height:100%; }
+    body{  margin:0; padding: 0;}
+    canvas{  width:800px; height:600px; border:2px solid rgb(0, 0, 0); }
+    div{   height:600px;  padding-left:10px; }
+    .colors>span{  display:inline-block; width:40px; height:40px; cursor:pointer;  }
+    .colors>span:nth-child(1){  background:#2ecc71;  }
+    .colors>span:nth-child(2){  background:#3498db;  }
+    .colors>span:nth-child(3){  background:#e74c3c;  }
+    .colors>span:nth-child(4){  background:#2c3e50;  }
+    .colors>span:nth-child(5){  background:#f1c40f;  }
+    .colors>span:nth-child(6){  background:#f1690f;  }
+    .colors>span:nth-child(7){  background:#8b0ff1;  }
+
+    .colors>span:nth-child(9){   background:#00ff37;  }
+    .colors>span:nth-child(10){  background:#0044ff;  }
+    .colors>span:nth-child(11){  background:#ff1900;  }
+    .colors>span:nth-child(12){  background:#121092;  }
+    .colors>span:nth-child(13){  background:#e5ff00;  }
+    .colors>span:nth-child(14){  background:#ff5100;  }
+    .colors>span:nth-child(15){  background:#ae00ff;  }
+
+    div>div{  height:auto;  margin-top:20px;  padding:0; }
+    #imgFile{  display:none;  }
+    label{
+      display:block; width:120px; height:30px; background:#3498bb; color:#fff;
+      border-radius:6px; text-align:center; line-height:30px; cursor:pointer;
+      margin-bottom:10px;
+    }
+    /* 그림판 그라데이션 */
+    body{
+            height: 100vh; margin: 0; padding: 0; background: #f2f3f7;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .text-mask{
+            font-size: 76px; font-weight: bold;
+            background: linear-gradient(45deg, #ff00ff, #00ffff, #ff00ff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent; 
+            animation: gradientFlow 5s ease infinite;
+        } 
+        @keyframes gradientFlow {
+            0%{ background-position: 0% 50%; }
+            50%{ background-position: 100% 50%; }
+            100%{ background-position: 0% 50%; }
+        }
+  </style>
+</head>
+<body>
+  <div class="text-mask"></div>
+  <canvas></canvas>
+  <div>
+    <input type="range" id="strokeW" min="1" max="9" value="4">
+    <div class="colors">
+      <span data-color="#2ecc71"></span>
+      <span data-color="#3498db"></span>
+      <span data-color="#e74c3c"></span>
+      <span data-color="#2c3e50"></span>
+      <span data-color="#f1c40f"></span>
+      <span data-color="#f1690f"></span>
+      <span data-color="#8b0ff1"></span><br>
+
+      <span data-color="#00ff37"></span>
+      <span data-color="#0044ff"></span>
+      <span data-color="#ff1900"></span>
+      <span data-color="#121092"></span>
+      <span data-color="#e5ff00"></span>
+      <span data-color="#ff5100"></span>
+      <span data-color="#ae00ff"></span>
+    </div>
+    <div class="btns">
+      <div>
+        <input type="file" id="imgFile" accept="image/*">
+        <label for="imgFile">Image Search</label>
+      </div>
+      <button id="reset">RESET</button>
+      <button id="erase">ERASE</button>
+      <button id="save">Save Image</button>
+    </div>
+  </div>
+  <script>
+    const canvas = document.querySelector('canvas');
+    const ctx = canvas.getContext('2d');
+    const strW = document.querySelector('#strokeW');
+    const colorBtn = document.querySelectorAll('span');
+    const resetBtn = document.querySelector('#reset');
+    const eraseBtn = document.querySelector('#erase');
+
+    canvas.width = 800;
+    canvas.height = 600;
+    ctx.lineCap = "round"; /* square, round, butt(기본) */
+    ctx.lineWidth = strW.value;   // console.log(strW.value);
+    isDrawing = false;
+
+    const deleteAll=()=>{
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0,0,800,600);
+      ctx.strokeStyle = 'black';
+      ctx.lineWidth = strW.value;
+    }
+    resetBtn.addEventListener('click', deleteAll);
+
+    const eraser=()=>{
+      ctx.strokeStyle = 'white';
+    }
+    eraseBtn.addEventListener('click', eraser);
+
+    const lineW=(event)=>{ // change event
+      ctx.lineWidth = event.target.value;
+    }
+    strW.addEventListener('change', lineW);
+
+    const colorChange=(event)=>{ // forEach
+      ctx.strokeStyle = event.target.dataset.color;
+    }
+    colorBtn.forEach((span)=>{
+      span.addEventListener('click', colorChange);
+    });
+
+    const downEvent=()=>{
+      isDrawing = true;
+    }
+    const moveEvent=(event)=>{
+      if( isDrawing ){
+        ctx.lineTo( event.offsetX, event.offsetY );
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.moveTo( event.offsetX, event.offsetY);
+    }
+    const upEvent=()=>{
+      isDrawing = false;
+    }
+    canvas.addEventListener('mousedown', downEvent);
+    canvas.addEventListener('mousemove', moveEvent);
+    canvas.addEventListener('mouseleave', upEvent);
+    document.addEventListener('mouseup', upEvent);
+
+
+    const saveBtn = document.querySelector('#save');
+    const saveImage = () =>{
+      const url = canvas.toDataURL(); //console.log(url);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'myPicture.png'; // <a href="~" download="~"></a>
+      a.click();
+    }
+    saveBtn.addEventListener('click', saveImage );
+
+    const imgInput = document.querySelector('#imgFile');
+    const bgImg=(event)=>{
+      const fileURL = event.target.files[0]; //console.log( event.target.files[0] );
+      const imgURL = URL.createObjectURL( fileURL ); // console.log(imgURL);
+      const image = new Image();
+      image.src = imgURL;
+      image.onload = function(){
+        ctx.drawImage(image, 0,0,800,600);
+      }
+    }
+    imgInput.addEventListener('change', bgImg );
+
+    /*
+    <tag data-color="~"> --->  event.target.getAttribute('data-color')
+                               event.target.dataset.color
+
+    canvas.addEventListener('mousedown',downEv)
+    function downEv(event){
+      context.moveTo(event.oX, event.oY);
+      canvas.addEventListener('mousemove', moveEv)
+      function moveEv(event){
+        context.lineTo(event.oX,event.oY);
+        context.stroke()
+      }
+    }
+    canvas.addEventListener('mouseup',upEv)
+    function upEv(){
+      canvas.removeEventListener('mousemove');
+    }
+    */
+  </script>
+</body>
+</html>
